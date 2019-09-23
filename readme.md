@@ -5,9 +5,9 @@
 实现上传代码在tjaubbs\controller\UploadAvatarController.java中
 ### 页面情况
 
-![](images\1.png)
+![](images/1.png)
 
-![](images\2.png)
+![](images/2.png)
 
-![](images\3.png)
+![](images/3.png)
 
