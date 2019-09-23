@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>后台管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="../../static/css/global.css" th:href="@{/css/global.css}">
+    <link rel="stylesheet" href="../../static/layui/css/layer.css" th:href="@{/layui/css/layer.css}">
+    <link rel="stylesheet" href="../../static/layui/css/code.css" th:href="@{/layui/css/code.css}">
+    <link rel="stylesheet" href="../../static/layui/css/laydate.css" th:href="@{/layui/css/laydate.css}">
+
+<body>
+<div class="layui-container fly-marginTop fly-user-main">
+
+    <ul class="layui-nav layui-nav-tree layui-inline" th:fragment="leftbar_stu">
+        <li class="layui-nav-item">
+            <a href="../homepage.html" th:href="@{/toMyHomepage}">
+                <i class="layui-icon">&#xe68e</i>我的主页
+            </a>
+        </li>
+        <li class="layui-nav-item layui-nav-itemed" >
+            <a href="javascript:"><i class="layui-icon">&#xe667</i>我的消息</a>
+            <dl class="layui-nav-child">
+                <dd><a href="../message/msg_stu_apply.html" th:href="@{/tomsgstuapply}">签约申请</a></dd>
+                <!--
+                <dd><a href="../message/msg_stu_cancel.html" th:href="@{/tomsgstucancel}">解约申请</a></dd>
+                <dd><a href="../message/msg_stu_finish.html" th:href="@{/tomsgstufinish}">结项申请</a></dd>
+                -->
+            </dl>
+        </li>
+        <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:"><i class="layui-icon">&#xe60a</i>我的任务</a>
+            <dl class="layui-nav-child">
+                <dd><a href="../user/stutask_ing.html" th:href="@{/stutasking}">正在完成中</a></dd>
+                <dd><a href="../user/stutask_end.html" th:href="@{/stutaskend}">全部任务</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:"><i class="layui-icon">&#xe716</i>基本设置</a>
+            <dl class="layui-nav-child">
+                <dd><a th:href="@{/toBasicInfo}">修改信息</a></dd>
+                <dd><a th:href="@{/toMyResume}">编辑简历</a></dd>
+                <dd><a th:href="@{/toEditAvatar}">更换头像</a></dd>
+            </dl>
+        </li>
+
+    </ul>
+</div>
+</body>
+<script type="text/javascript" src="../../static/jquery-3.3.1.js" th:src="@{/jquery-3.3.1.js}"></script>
+<script src="../../static/layui/layui.js"></script>
+<script th:inline="none">
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+</script>
+</html>

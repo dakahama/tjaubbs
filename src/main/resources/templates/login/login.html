@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>登入</title>
+    <link rel="stylesheet" href="../../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="../../static/css/global.css" th:href="@{/css/global.css}">
+</head>
+<body>
+
+<div th:replace="~{common/header::header-bar}"></div>
+
+<div class="layui-container fly-marginTop">
+    <div class="fly-panel fly-panel-user" pad20="">
+        <div class="layui-tab layui-tab-brief">
+
+            <ul class="layui-tab-title">
+                <li class="layui-this">登入</li>
+                <li><a href="register.html" th:href="@{/register}">注册</a></li>
+            </ul>
+
+            <div class="layui-tab-content" style="padding: 20px 0">
+                <div class="layui-form layui-form-pane layui-tab-item layui-show">
+                    <form method="post" action="" th:action="@{/login}">
+
+                        <div class="layui-form-item">
+
+                            <label for="id" class="layui-form-label">学号/工号</label>
+                            <div class="layui-input-inline">
+                                <input class="layui-input" type="text" id="id" name="id" required  autocomplete="off">
+                            </div>
+                            <!--这里写登入结果提示信息-->
+                            <div th:if="${msg}">
+                                <div style="color:#fc3729;" class="layui-form-mid" th:text="${msg}">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="password" class="layui-form-label">密码</label>
+                            <div class="layui-input-inline">
+                                <input class="layui-input" type="password" id="password" name="password" required autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <button class="layui-btn" type="submit">立即登入</button>
+                            <!--
+                            <span style="padding-left: 20px"><a href="findpassword.html" th:href="">使用邮箱找回密码?</a></span>
+                            -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<script src="../../static/layui/layui.js" th:src="@{/layui/layui.js}">
+    layui.use(['element','from'], function(){
+        var element = layui.element;
+        var form = layui.form;
+    });
+</script>
+</body>
+</html>

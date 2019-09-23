@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>后台管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="../../static/css/global.css" th:href="@{/css/global.css}">
+    <link rel="stylesheet" href="../../static/layui/css/layer.css" th:href="@{/layui/css/layer.css}">
+    <link rel="stylesheet" href="../../static/layui/css/code.css" th:href="@{/layui/css/code.css}">
+    <link rel="stylesheet" href="../../static/layui/css/laydate.css" th:href="@{/layui/css/laydate.css}">
+    <link rel="stylesheet" href="../../static/ImgCropping/css/cropper.min.css" th:href="@{/ImgCropping/css/cropper.min.css}">
+    <link rel="stylesheet" href="../../static/ImgCropping/css/ImgCropping.css" th:href="@{/ImgCropping/css/ImgCropping.css}">
+
+<body>
+<div>
+<div th:replace="~{common/header::header-bar}"></div>
+<div class="layui-container fly-marginTop fly-user-main">
+
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title" id="LAY_mine">
+                <li class="layui-this">修改头像</li>>
+            </ul>
+
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <div class="layui-form layui-form-pane layui-tab-item layui-show">
+
+                    <div  style="width: 200px;height: 200px;border: solid 1px #555;margin-top: 10px;text-align: center">
+                        <img id="finalImg" src="" width="100%">
+                    </div>
+
+
+                    <!--图片裁剪框 start-->
+                    <div style="display: none" class="tailoring-container">
+                        <div class="black-cloth" onclick="closeTailor(this)"></div>
+                        <div class="tailoring-content">
+                            <div class="tailoring-content-one">
+                                <label title="上传图片" for="chooseImg" class="l-btn choose-btn">
+                                    <input type="file" accept="image/jpg,image/jpeg,image/png" name="file" id="chooseImg" class="hidden" onchange="selectImg(this)">
+                                    选择图片
+                                </label>
+                                <div class="close-tailoring"  onclick="closeTailor(this)">×</div>
+                            </div>
+                            <div class="tailoring-content-two">
+                                <div class="tailoring-box-parcel">
+                                    <img id="tailoringImg">
+                                </div>
+                                <div class="preview-box-parcel">
+                                    <p>图片预览：</p>
+                                    <div class="square previewImg"></div>
+                                    <div class="circular previewImg"></div>
+                                </div>
+                            </div>
+                            <div class="tailoring-content-three">
+                                <button class="l-btn cropper-reset-btn">复位</button>
+                                <button class="l-btn cropper-rotate-btn">旋转</button>
+                                <button class="l-btn cropper-scaleX-btn">换向</button>
+                                <button class="l-btn sureCut" id="sureCut">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div style="padding-top: 20px" class="layui-form-pane">
+                        <button id="replaceImg" class="layui-btn">更换头像</button>
+                    </div>
+
+
+
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+</div>
+</div>
+</body>
+<script src="../../static/editormd/jquery-3.3.1.js" th:src="@{/editormd/jquery-3.3.1.js}"></script>
+<script src="../../static/layui/layui.js" th:src="@{/layui/layui.js}"></script>
+<script src="../../static/ImgCropping/js/cropper.min.js" th:src="@{/ImgCropping/js/cropper.min.js}"></script>
+<script th:inline="none">
+
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+
+    //弹出框水平垂直居中
+    (window.onresize = function () {
+        var win_height = $(window).height();
+        var win_width = $(window).width();
+        if (win_width <= 768){
+            $(".tailoring-content").css({
+                "top": (win_height - $(".tailoring-content").outerHeight())/2,
+                "left": 0
+            });
+        }else{
+            $(".tailoring-content").css({
+                "top": (win_height - $(".tailoring-content").outerHeight())/2,
+                "left": (win_width - $(".tailoring-content").outerWidth())/2
+            });
+        }
+    })();
+
+    //弹出图片裁剪框
+    $("#replaceImg").on("click",function () {
+        $(".tailoring-container").toggle();
+    });
+
+    //选择图片
+    function selectImg(file) {
+        if (!file.files || !file.files[0]){
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            var replaceSrc = evt.target.result;
+            //更换cropper的图片
+            //默认false，适应高度，不失真
+            $('#tailoringImg').cropper('replace', replaceSrc, false);
+        };
+        reader.readAsDataURL(file.files[0]);
+    }
+    //cropper图片裁剪
+    $('#tailoringImg').cropper({
+        aspectRatio: 1,//默认比例
+        preview: '.previewImg',//预览视图
+        guides: false,  //裁剪框的虚线(九宫格)
+        autoCropArea: 0.5,  //0-1之间的数值，定义自动剪裁区域的大小，默认0.8
+        movable: true, //是否允许移动图片
+        dragCrop: true,  //是否允许移除当前的剪裁框，并通过拖动来新建一个剪裁框区域
+        movable: true,  //是否允许移动剪裁框
+        resizable: true,  //是否允许改变裁剪框的大小
+        zoomable: false,  //是否允许缩放图片大小
+        mouseWheelZoom: false,  //是否允许通过鼠标滚轮来缩放图片
+        touchDragZoom: true,  //是否允许通过触摸移动来缩放图片
+        rotatable: true,  //是否允许旋转图片
+        crop: function(e) {
+            // 输出结果数据裁剪图像。
+        }
+    });
+    //旋转
+    $(".cropper-rotate-btn").on("click",function () {
+        $('#tailoringImg').cropper("rotate", 45);
+    });
+    //复位
+    $(".cropper-reset-btn").on("click",function () {
+        $('#tailoringImg').cropper("reset");
+    });
+    //换向
+    var flagX = true;
+    $(".cropper-scaleX-btn").on("click",function () {
+        if(flagX){
+            $('#tailoringImg').cropper("scaleX", -1);
+            flagX = false;
+        }else{
+            $('#tailoringImg').cropper("scaleX", 1);
+            flagX = true;
+        }
+        flagX != flagX;
+    });
+
+    //裁剪后的处理
+    $("#sureCut").on("click",function () {
+        if ($("#tailoringImg").attr("src") == null ){
+            return false;
+        }else{
+            var cas = $('#tailoringImg').cropper('getCroppedCanvas');//获取被裁剪后的canvas
+
+            //转换为base64地址形式
+            var base64url = cas.toDataURL('image/jpeg');
+
+
+            //显示为图片的形式 裁剪完之后在finnalImg中显示
+            $("#finalImg").prop("src",base64url);
+
+            //ajax请求上传
+            uploadFile(encodeURIComponent(base64url));
+
+            //关闭裁剪框
+            closeTailor();
+        }
+    });
+    //关闭裁剪框
+    function closeTailor() {
+        $(".tailoring-container").toggle();
+    }
+
+    //ajax请求上传
+    function uploadFile(file) {
+        $.ajax({
+            url : '/uploadAvatar',
+            type : 'POST',
+            data : "file=" + file,
+            async : true,
+            success : function(data) {
+                console.log(data)
+            }
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="../../static/css/global.css" th:href="@{/css/global.css}">
+    <link rel="stylesheet" href="../../static/layui/css/layer.css" th:href="@{/layui/css/layer.css}">
+    <link rel="stylesheet" href="../../static/layui/css/code.css" th:href="@{/layui/css/code.css}">
+    <link rel="stylesheet" href="../../static/layui/css/laydate.css" th:href="@{/layui/css/laydate.css}">
+    <link rel="stylesheet" href="../../static/editormd/css/editormd.css" th:href="@{/editormd/css/editormd.css}">
+</head>
+<body>
+
+<div th:replace="~{common/header::header-bar}"></div>
+<div class="layui-container fly-marginTop fly-user-main">
+
+    <div th:replace="~{common/leftbar_stu::leftbar_stu}" ></div>
+    <div class="fly-panel fly-panel-user" pad20="">
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title" id="LAY_mine">
+                <li class="layui-this">
+                    正在进行的任务
+                </li>
+                <li>
+                    过程文件管理
+                </li>
+            </ul>
+
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <div th:if="!${have}" class="fly-msg" style="margin-bottom: 20px">
+                        你没有正在进行的任务
+                    </div>
+                    <div th:if="${have}" class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="fly-panel fly-panel-border" >
+                                <div class="fly-panel-title">你的任务信息
+                                    <a th:href="@{/ShowTaskDetail(id=${contract.task.id})}" style="color: #1E9FFF;padding-left: 20px">前往查看详情</a></div>
+                                <div class="fly-panel-main layui-text" style="padding: 18px 15px;height: auto;line-height: 26px">
+                                    <p>任务标题:<span th:text="${contract.task.title}" style="padding-right: 20px;color: #FF7200">标题</span></p>
+                                    <p>发布人:<span th:text="${contract.userB.username}" style="padding-right: 20px;color: #FF7200">标题</span></p>
+                                    <p>发布时间:<span th:text="${contract.task.publicDate}"></span>
+                                    <p>截止时间:<span th:text="${contract.task.endDate}"></span></p>
+                                    <p>关键词:[[${contract.task.keyword}]]</p>
+                                </div>
+                                <input type="hidden" id="contractId" th:value="${contract.id}"/>
+                            </div>
+                        </div>
+                        <!--添加过程文件-->
+                        <div class="layui-col-md6">
+                            <div class="fly-panel fly-panel-border" >
+                                <div class="fly-panel-title">添加过程文件</div>
+                                <div class="fly-panel-main layui-form layui-form-pane" style="height:auto">
+                                    <form enctype="multipart/form-data" method="post" th:action="@{/addProcess}">
+                                        <input type="hidden" th:value="${contract.id}" name="contractId">
+                                        <div class="layui-form-item">
+                                            <label for="processtitle" class="layui-form-label">过程标题</label>
+                                            <div class="layui-input-inline">
+                                                <input value required type="text" id="processtitle" name="title" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item layui-form-text">
+                                            <label for="detail" class="layui-form-label">过程介绍</label>
+                                            <div class="layui-form-block">
+                                                <textarea class="layui-textarea" placeholder="过程简要描述" id="detail" name="detail" autocomplete="off" style="height: 80px"></textarea>
+                                            </div>
+                                        </div>
+                                        <input type="file" id="exampleInputFile" name="file">
+                                        <div class="layui-form-item" style="padding-top: 20px">
+                                            <button class="layui-btn" type="submit">确认上传</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-tab-item">
+                    <table class="layui-hide" id="test" lay-filter="demo"></table>
+                    <script  type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+                    </script>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../static/jquery-3.3.1.js" th:src="@{/jquery-3.3.1.js}"></script>
+<script src="../../static/layui/layui.js" th:src="@{/layui/layui.js}"></script>
+<script th:inline="none">
+    layui.use(['laydate', 'layer', 'table', 'carousel', 'upload', 'element'], function(){
+        var laypage = layui.laypage,
+            layer=layui.layer,
+            element=layui.element,
+            table = layui.table;
+
+        var  contractId = $("#contractId").val();
+        table.render({
+            elem: '#test'
+            ,height: 500
+            ,url: '/getAllprocess?contractId='+contractId //数据接口
+            ,page: true //开启分页
+            ,limit: 10
+            ,even: true
+            ,cellMinWidth: 80
+            ,cols: [[{field: 'publicDate', title: '发布日期',  sort: true}
+                ,{field: 'title', title: '过程标题' }
+                ,{field: 'file', title: '文件路径'}
+                ,{filed:'right',align:'center',toolbar:'#barDemo'}
+            ]]
+            ,done:function (data) {
+                //userPage.data = data.data;
+            }
+        });
+
+        table.on('tool(demo)',function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            var tr = obj.tr;
+
+            if (layEvent === 'delete'){
+
+                $.ajax({
+                    type:'post',
+                    dataType:'json',
+                    data:{'id':data.id},
+                    url:'/deleteProcess',
+                    success:function (data) {
+                        console.log("success");
+                    }
+                })
+
+
+            }
+
+
+        });
+    })
+</script>
+</body>
+</html>

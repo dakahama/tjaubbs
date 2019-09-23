@@ -1,0 +1,143 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>天农论坛</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="../static/css/global.css" th:href="@{/css/global.css}">
+    <link rel="stylesheet" href="../static/layui/css/layer.css" th:href="@{/layui/css/layer.css}">
+    <link rel="stylesheet" href="../static/layui/css/code.css" th:href="@{/layui/css/code.css}">
+    <link rel="stylesheet" href="../static/layui/css/laydate.css" th:href="@{/layui/css/laydate.css}">
+    <link rel="stylesheet" href="../static/editormd/css/editormd.css" th:href="@{/editormd/css/editormd.css}">
+
+</head>
+<body>
+<div th:replace="~{common/header::header-bar}"></div>
+<div class="layui-container fly-marginTop">
+    <div class="fly-panel" pad20="" style="padding-top: 5px">
+        <div class="layui-form layui-form-pane">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">编辑发布任务</li>
+                </ul>
+                <div class="layui-form layui-tab-content id=LAY_ucm" style="padding: 20px 0">
+                    <div class="layui-tab-item layui-show">
+                        <form action="/addTask" th:action="@{/addTask}" method="post">
+                            <!--表格的第一行-->
+                            <div class="layui-row layui-col-space15 layui-form-item">
+                                <div class="layui-col-md4">
+                                    <label for="title" class="layui-form-label">标题</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="title" name="title" required autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <label for="keyword" class="layui-form-label">关键词</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="keyword" name="keyword" required autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <label for="overtime" class="layui-form-label">截止时间</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="overtime" name="endTime" required autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--编辑器-->
+                            <div class="layui-form-item layui-form-text">
+                                <div class="layui-input-block">
+                                    <div id="layout" class="editor">
+                                        <div id="my-editormd">
+                                            <textarea id="my-editormd-markdown-doc" name="my-editormd-markdown-doc" style="display:none;"></textarea>
+                                            <textarea  id="my-editormd-html-code" name="my-editormd-html-code" style="display:none;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--积分-->
+                            <div class="layui-form-item">
+                                <label for="money" class="layui-form-label">赏金</label>
+                                <div class="layui-input-inline">
+                                    <input value="" required type="text" id="money" name="money" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">
+                                    <span style="color: #01AAED">给予完成者的赏金 赏金即个人积分</span>
+                                    <a href="" style="color: red"> 了解积分规格</a>
+                                </div>
+                            </div>
+
+                            <div class="layui-inline">
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="state" value="存为草稿" title="存为草稿">
+                                    <div class="layui-unselect layui-form-radio">
+                                        <i class="layui-anim layui-icon"></i>
+                                        <div>存为草稿</div>
+                                    </div>
+                                    <input type="radio" name="state" value="立即发布" title="立即发布">
+                                    <div class="layui-unselect layui-form-radio">
+                                        <i class="layui-anim layui-icon"></i>
+                                        <div>立即发布</div>
+                                    </div>
+                                    <button class="layui-btn" type="reset">重置</button>
+                                    <button class="layui-btn" type="submit">提交</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+<script type="text/javascript" src="../static/editormd/jquery-3.3.1.js" th:src="@{/editormd/jquery-3.3.1.js}"></script>
+<script src="../static/editormd/editormd.js" th:src="@{/editormd/editormd.js}"></script>
+<script type="text/javascript" src="../static/layui/layui.js" th:src="@{/layui/layui.js}">
+</script>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#overtime'
+        });
+    });
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+    layui.use('form', function(){
+        var form = layui.form;
+    });
+</script>
+<script th:inline="none">
+    var testEditor;
+    testEditor = editormd("my-editormd", {
+        placeholder:'本编辑器支持Markdown编辑，左边编写，右边预览',  //默认显示的文字，这里就不解释了
+        width: "100%",
+        height: 640,
+        syncScrolling: "single",
+        path: "/editormd/lib/",   //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+        saveHTMLToTextarea: true,
+        imageUpload: true,
+        imageFormats : [ "jpg", "jpeg", "gif", "png", "bmp", "webp" ],
+        imageUploadURL : "/uploadtaskimg",
+        onload: function () {
+
+        },
+        tocm: true,         // Using [TOCM]
+        tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+        flowChart: true,             // 开启流程图支持，默认关闭
+        sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+        toolbarIcons : function() {  //自定义工具栏，后面有详细介绍
+            return editormd.toolbarModes['full']; // full, simple, mini
+        }
+    });
+
+</script>
+</html>

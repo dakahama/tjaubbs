@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>才华有限论坛</title>
+    <meta name="viewport" content="">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="../static/css/global.css" th:href="@{/css/global.css}">
+</head>
+<body>
+
+<div th:replace="~{common/header::header-bar}"></div>
+
+<div class="fly-panel fly-column" th:fragment="gonggao-bar">
+    <div class="layui-container">
+        <div style="text-align: center">系统通知</div>
+    </div>
+</div>
+
+<div class="layui-container">
+    <div class="layui-row layui-col-space15">
+        <!--左边部分-->
+        <div class="layui-col-md8">
+            <div class="fly-panel" style="margin-bottom: 0;">
+                <div class="fly-panel-title fly-filter">
+                    <a>老师发布的项目</a>
+                </div>
+                <div class="fly-panel-title fly-filter">
+                    <a href="" class="layui-this">全部项目</a>
+                    <!--
+                    <span class="fly-mid"></span>
+                    <a href="">未认领</a>
+                    <span class="fly-mid"></span>
+                    <a href="">已认领</a>
+                    <span class="fly-mid"></span>
+                    <a href="">已经完成</a>
+                    -->
+                </div>
+
+                <ul class="fly-list" id="demo">
+
+                </ul>
+
+
+                <div style="text-align: center">
+                    <div id="laypage-main"></div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+        <div class="layui-col-md4">
+
+            <!--
+            <div class="fly-panel">
+                <h3 class="fly-panel-title">班级最新动态</h3>
+                <ul class="fly-panel-main fly-list-static">
+                    <li>
+                        <a href="" target="_blank">111111</a>
+                    </li>
+                    <li>
+                        <a href="" target="_blank">222222</a>
+                    </li>
+                    <li>
+                        <a href="" target="_blank">333333</a>
+                    </li>
+                    <li>
+                        <a href="" target="_blank">444444</a>
+                    </li>
+                    <li>
+                        <a href="" target="_blank">555555</a>
+                    </li>
+                </ul>
+            </div>
+            -->
+            <!--
+            <div class="fly-panel fly-signin">
+                <div class="fly-panel-title">
+                    签到
+                    <i class="fly-mid"></i>
+                    <a href="javascript:" class="fly-link" id="LAY_signinHelp">说明</a>
+                    <i class="fly-mid"></i>
+                    <a href="javascript:" class="fly-link" id="LAY_signinTop">活跃榜<span class="layui-badge-dot"></span></a>
+                    <span class="fly-signin-days">已连续签到<cite>16</cite>天</span>
+                </div>
+                <div class="fly-panel-main fly-signin-main">
+                    <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
+                    <span>可获得<cite>5</cite>飞吻</span>
+
+
+
+                    <button class="layui-btn layui-btn-disabled">今日已签到</button>
+                    <span>获得了<cite>20</cite>飞吻</span>
+
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+</div>
+
+<div class="layui-footer"></div>
+<script src="../static/jquery-3.3.1.js" th:src="@{/jquery-3.3.1.js}"></script>
+<script src="../static/layui/layui.js" th:src="@{/layui/layui.js}"></script>
+<script th:inline="none">
+
+    $(function () {
+
+        pageHandel();
+
+    });
+
+
+    function pageHandel(){
+        layui.use(['layer','laypage','element'],function () {
+
+            var laypage = layui.laypage,
+                element = layui.element,
+                layer = layui.layer;
+
+            $.ajax({
+                type:'post',
+                dataType:'json',
+                data:{'curr':1,'limit':5},
+                url:'/getAllTasks',
+                success:function (data) {
+                    console.log(data);
+                    showData(data);
+                    laypage.render({
+                        elem:'laypage-main',
+                        count:data.count,
+                        limit: 5,
+                        layout:['prev','page','next'],
+                        jump:function (obj,first) {
+                            if (!first){
+                                $.ajax({
+                                    type:'post',
+                                    dataType:'json',
+                                    data:{'curr':obj.curr,'limit':obj.limit},
+                                    url:'/getAllTasks',
+                                    success:function (ff) {
+                                        console.log(obj.curr);
+                                        console.log(obj.limit);
+                                        showData(ff);
+                                    }
+                                })
+                            }
+
+                        }
+
+                    });
+
+                }
+            });
+
+        });
+    }
+
+    function showData(data) {
+
+        $("#demo").empty();
+        var str = "";
+        for (var i = 0; i < data.data.length; i++) {
+            //console.log(data.data.length);
+            //str+="<tr><td>"+data.data[i].id+"</td><td>"+data.data[i].name+"</td></tr>"
+
+            str+="<li><a class='fly-avatar' href='"+"/toHomepage?userId="+data.data[i].user.id+"'>"+
+                "<img src='"+data.data[i].user.avatar+"' alt=''>"
+                +"</a><h2><a href='/ShowTaskDetail?id="+data.data[i].id+"'>"+data.data[i].title+"</a><a class='layui-badge'>"+data.data[i].keyword
+                +"</a></h2><div class='fly-list-info'>" +
+                "<span>"+data.data[i].user.username+"</span><span>"+data.data[i].publicDate+"</span><span>"+
+                data.data[i].endDate+"</span><span class='fly-list-kiss layui-hide-xs' title='悬赏'><i class='iconfont icon-kiss'></i>"+data.data[i].money
+                +"</span><span class='layui-badge fly-badge-accept layui-hide-xs'>"+"任务"+"</span></div></li>";
+        }
+
+        //console.log(data.data.length);
+
+        $("#demo").append(str);
+
+    }
+
+</script>
+</body>
+</html>

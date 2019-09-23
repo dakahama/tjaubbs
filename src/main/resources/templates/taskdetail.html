@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>任务详情</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="fly,layui,前端社区">
+  <meta name="description" content="">
+  <link rel="stylesheet" href="../static/layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+  <link rel="stylesheet" href="../static/css/global.css" th:href="@{/css/global.css}">
+</head>
+<body>
+
+<div th:replace="~{common/header::header-bar}"></div>
+
+<div th:replace="~{index::gonggao-bar}"></div>
+
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8 content detail">
+        <div class="fly-panel detail-box">
+            <h1 th:text="${task.title}"></h1>
+            <div class="fly-detail-info">
+                <!-- <span class="layui-badge">审核中</span> -->
+                <span class="layui-badge layui-bg-green fly-detail-column">任务介绍</span>
+
+                <span th:if="${task.state}==2" class="layui-badge" style="background-color: #999;">等待被认领</span>
+                <span th:if="${task.state}==3" class="layui-badge" style="background-color: black;">已经被签约</span>
+                <span th:if="${task.state}==4" class="layui-badge" style="background-color: red;">已经完成</span>
+                <!--
+                <span class="layui-badge layui-bg-black">置顶</span>
+                <span class="layui-badge layui-bg-red">精帖</span>
+                -->
+            </div>
+            <div class="detail-about">
+                <a class="fly-avatar" href="homepage.html" th:href="@{/toHomepage(userId=${task.userId})}">
+                    <img th:src="${task.user.avatar}" alt="">
+                </a>
+                <div class="fly-detail-user">
+                    <a href="homepage.html" th:href="@{/toHomepage(userId=${task.userId})}" class="fly-link">
+                        <cite th:text="${task.user.username}"></cite>
+                    </a>
+                    <span>发布日期：[[${task.publicDate}]]</span>
+                </div>
+                <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
+                    <span style="padding-right: 10px; color: #FF7200">悬赏：[[${task.money}]] 积分</span>
+                </div>
+            </div>
+            <!--显示项目的详细介绍-->
+            <div class="detail-body photos">
+                <div id="wordsView" style="width: auto">
+                    <textarea style="display: none;" name="editormd-markdown-doc" th:text="${task.detail}"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+
+
+      <div class="fly-panel detail-box" id="" th:if="${task.state==2}">
+        <div class="layui-form layui-form-pane">
+          <form method="post" th:action="@{/applyTask}">
+              <input type="hidden" name="taskid" th:value="${task.id}">
+              <input type="hidden" name="taskuserid" th:value="${task.user.id}">
+              <div class="layui-form-item layui-form-text">
+              <div class="layui-input-block">
+                <textarea id="L_content" name="detail" required placeholder="您需要登入才能申请项目,且必须在此处填写申请理由，申请只有一次机会"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <button class="layui-btn" type="submit">提交申请</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+      <!--右边-->
+      <div class="layui-col-md4">
+          <div class="fly-panel fly-panel-border" >
+              <div class="fly-panel-title">
+                  <b th:if="${processes}">项目进度展示</b>
+                  <b th:if="${processes}==null">该项目还没有开始进行</b>
+              </div>
+              <ul class="layui-timeline fly-panel-main" th:if="${processes}">
+                  <li class="layui-timeline-item" th:each="process:${processes}">
+                      <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                      <div class="layui-timeline-content layui-text">
+                          <h3 class="layui-timeline-title" th:text="${process.publicDate}">2019-4-14</h3>
+                          <p>
+                             [[${process.describe}]]
+                          </p>
+                      </div>
+                  </li>
+                  <li class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                      <div class="layui-timeline-content layui-text">
+                          <div class="layui-timeline-title">开始</div>
+                      </div>
+                  </li>
+              </ul>
+          </div>
+      </div>
+
+  </div>
+</div>
+
+<div th:replace="~{common/footer::footer-bar}"></div>
+
+<script src="../static/editormd/jquery-3.3.1.js" th:src="@{/editormd/jquery-3.3.1.js}"></script>
+<script src="../static/editormd/lib/marked.min.js" th:src="@{/editormd/lib/marked.min.js}"></script>
+<script src="../static/editormd/lib/prettify.min.js" th:src="@{/editormd/lib/prettify.min.js}"></script>
+<script src="../static/editormd/lib/raphael.min.js" th:src="@{/editormd/lib/raphael.min.js}"></script>
+<script src="../static/editormd/lib/underscore.min.js" th:src="@{/editormd/lib/underscore.min.js}"></script>
+<script src="../static/editormd/lib/sequence-diagram.min.js" th:src="@{/editormd/lib/sequence-diagram.min.js}"></script>
+<script src="../static/editormd/lib/flowchart.min.js" th:src="@{/editormd/lib/flowchart.min.js}"></script>
+<script src="../static/editormd/lib/jquery.flowchart.min.js" th:src="@{/editormd/lib/jquery.flowchart.min.js}"></script>
+<script src="../static/editormd/editormd.min.js" th:src="@{/editormd/editormd.min.js}"></script>
+<script src="../static/layui/layui.js" th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+    $(document).ready(function() {
+        var wordsView;
+        wordsView = editormd.markdownToHTML("wordsView", {
+            htmlDecode      : "style,script,iframe",
+            emoji           : true,
+            taskList        : true,
+            tex             : true,
+            flowChart       : true,
+            sequenceDiagram : true
+        });
+
+    })
+</script>
+</body>
+</html>
